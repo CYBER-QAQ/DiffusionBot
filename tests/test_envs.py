@@ -16,6 +16,9 @@
 import importlib
 
 import gymnasium as gym
+
+import rlbench
+
 import pytest
 import torch
 from gymnasium.utils.env_checker import check_env
@@ -24,6 +27,7 @@ import lerobot
 from lerobot.common.envs.factory import make_env
 from lerobot.common.envs.utils import preprocess_observation
 from lerobot.common.utils.utils import init_hydra_config
+
 
 from .utils import DEFAULT_CONFIG_PATH, DEVICE, require_env
 

@@ -124,6 +124,7 @@ def rollout(
     policy.reset()
 
     observation, info = env.reset(seed=seeds)
+    # print(observation["pixels"].shape)
     if render_callback is not None:
         render_callback(env)
 

@@ -325,7 +325,7 @@ class LeRobotDataset(torch.utils.data.Dataset):
         delta_timestamps: dict[list[float]] | None = None,
         tolerance_s: float = 1e-4,
         download_videos: bool = True,
-        local_files_only: bool = False,
+        local_files_only: bool = True,
         video_backend: str | None = None,
     ):
         """

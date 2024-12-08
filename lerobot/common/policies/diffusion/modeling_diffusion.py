@@ -141,12 +141,16 @@ class DiffusionPolicy(
             # TODO(rcadene): make above methods return output dictionary?
             actions = self.unnormalize_outputs({"action": actions})["action"]
 
+            # print(actions.shape)
+            # in pushT : [batch_size, n_action_steps, 2]
+
             self._queues["action"].extend(actions.transpose(0, 1))
 
         action = self._queues["action"].popleft()
         return action
 
     def forward(self, batch: dict[str, Tensor]) -> dict[str, Tensor]:
+        # used in offline training, not used in eval
         """Run the batch through the model and compute the loss for training or validation."""
         batch = self.normalize_inputs(batch)
         if len(self.expected_image_keys) > 0:
@@ -246,6 +250,7 @@ class DiffusionModel(nn.Module):
         global_cond_feats = [batch["observation.state"]]
         # Extract image features.
         if self._use_images:
+            # n = camera number?
             if self.config.use_separate_rgb_encoder_per_camera:
                 # Combine batch and sequence dims while rearranging to make the camera index dimension first.
                 images_per_camera = einops.rearrange(batch["observation.images"], "b s n ... -> n (b s) ...")
@@ -328,7 +333,8 @@ class DiffusionModel(nn.Module):
         assert n_obs_steps == self.config.n_obs_steps
 
         # Encode image features and concatenate them all together along with the state vector.
-        global_cond = self._prepare_global_conditioning(batch)  # (B, global_cond_dim)
+        global_cond = self._prepare_global_conditioning(batch)  # Encode image features and concatenate them all together along with the state vector.
+        # (B, global_cond_dim)
 
         # Forward diffusion.
         trajectory = batch["action"]
