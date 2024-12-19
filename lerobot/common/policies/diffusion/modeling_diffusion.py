@@ -73,6 +73,7 @@ class DiffusionPolicy(
         if config is None:
             config = DiffusionConfig()
         self.config = config
+        # print(dataset_stats)
         self.normalize_inputs = Normalize(
             config.input_shapes, config.input_normalization_modes, dataset_stats
         )

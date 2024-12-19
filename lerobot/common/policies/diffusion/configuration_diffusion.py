@@ -102,22 +102,35 @@ class DiffusionConfig:
     horizon: int = 16
     n_action_steps: int = 8
 
+    # pushT
+    # input_shapes: dict[str, list[int]] = field(
+    #     default_factory=lambda: {
+    #         "observation.image": [3, 96, 96],
+    #         "observation.state": [2],
+    #     }
+    # )
+    # output_shapes: dict[str, list[int]] = field(
+    #     default_factory=lambda: {
+    #         "action": [2],
+    #     }
+    # )
+    # GraspAnything
     input_shapes: dict[str, list[int]] = field(
         default_factory=lambda: {
-            "observation.image": [3, 96, 96],
-            "observation.state": [2],
+            "observation.images.zed_left": [3, 720, 1280],
+            "observation.state": [28],
         }
     )
     output_shapes: dict[str, list[int]] = field(
         default_factory=lambda: {
-            "action": [2],
+            "action": [28],
         }
     )
 
     # Normalization / Unnormalization
     input_normalization_modes: dict[str, str] = field(
         default_factory=lambda: {
-            "observation.image": "mean_std",
+            "observation.images.zed_left": "mean_std",
             "observation.state": "min_max",
         }
     )
