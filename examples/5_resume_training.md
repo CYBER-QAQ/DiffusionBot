@@ -26,6 +26,10 @@ python lerobot/scripts/train.py \
     resume=true
 ```
 
+python lerobot/scripts/train.py \
+    hydra.run.dir=/home/zc/DiffusionPolicy/lerobot/outputs/train/2024-12-29/20-22-43_real_world_diffusion_default \
+    resume=true
+
 You should see from the logging that your training picks up from where it left off.
 
 Note that with `resume=true`, the configuration file from the last checkpoint in the training output directory is loaded. So it doesn't matter that we haven't provided all the other configuration parameters from our previous command (although there may be warnings to notify you that your command has a different configuration than than the checkpoint).

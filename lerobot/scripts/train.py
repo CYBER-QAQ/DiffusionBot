@@ -310,6 +310,7 @@ def train(cfg: DictConfig, out_dir: str | None = None, job_name: str | None = No
     torch.backends.cuda.matmul.allow_tf32 = True
 
     logging.info("make_dataset")
+    print(cfg)
     offline_dataset = make_dataset(cfg)
     if isinstance(offline_dataset, MultiLeRobotDataset):
         logging.info(
@@ -438,7 +439,7 @@ def train(cfg: DictConfig, out_dir: str | None = None, job_name: str | None = No
         )
 
         train_info["dataloading_s"] = dataloading_s
-
+        # print(cfg.training.log_freq)
         if step % cfg.training.log_freq == 0:
             log_train_info(logger, train_info, step, cfg, offline_dataset, is_online=False)
 

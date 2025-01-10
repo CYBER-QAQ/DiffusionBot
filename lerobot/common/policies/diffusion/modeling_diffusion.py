@@ -326,6 +326,7 @@ class DiffusionModel(nn.Module):
         }
         """
         # Input validation.
+        # print(set(batch["action_is_pad"]))
         assert set(batch).issuperset({"observation.state", "action", "action_is_pad"})
         assert "observation.images" in batch or "observation.environment_state" in batch
         n_obs_steps = batch["observation.state"].shape[1]

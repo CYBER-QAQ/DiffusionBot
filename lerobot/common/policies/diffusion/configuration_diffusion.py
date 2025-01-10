@@ -118,6 +118,7 @@ class DiffusionConfig:
     input_shapes: dict[str, list[int]] = field(
         default_factory=lambda: {
             "observation.images.zed_left": [3, 720, 1280],
+            "observation.images.zed_right": [3, 720, 1280],
             "observation.state": [28],
         }
     )
@@ -131,6 +132,7 @@ class DiffusionConfig:
     input_normalization_modes: dict[str, str] = field(
         default_factory=lambda: {
             "observation.images.zed_left": "mean_std",
+            "observation.images.zed_right": "mean_std",
             "observation.state": "min_max",
         }
     )

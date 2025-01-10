@@ -70,8 +70,9 @@ from lerobot.common.robot_devices.robots.utils import Robot
 
 # For maintainers, see lerobot/common/datasets/push_dataset_to_hub/CODEBASE_VERSION.md
 CODEBASE_VERSION = "v2.0"
-LEROBOT_HOME = Path(os.getenv("LEROBOT_HOME", "~/.cache/huggingface/lerobot")).expanduser()
+# LEROBOT_HOME = Path(os.getenv("LEROBOT_HOME", "~/.cache/huggingface/lerobot")).expanduser()
 
+LEROBOT_HOME = Path(os.getenv("LEROBOT_HOME", "/home/zc/DiffusionPolicy/datasets")).expanduser()
 
 class LeRobotDatasetMetadata:
     def __init__(
@@ -83,7 +84,7 @@ class LeRobotDatasetMetadata:
         self.repo_id = repo_id
         self.root = Path(root) if root is not None else LEROBOT_HOME / repo_id
         self.local_files_only = local_files_only
-
+        
         # Load metadata
         (self.root / "meta").mkdir(exist_ok=True, parents=True)
         self.pull_from_repo(allow_patterns="meta/")
@@ -329,7 +330,7 @@ class LeRobotDataset(torch.utils.data.Dataset):
         download_videos: bool = False,
         local_files_only: bool = True,
         video_backend: str | None = None,
-        check_timestamps: bool = False,
+        check_timestamps: bool = True,
     ):
         """
         2 modes are available for instantiating this class, depending on 2 different use cases:
@@ -433,6 +434,7 @@ class LeRobotDataset(torch.utils.data.Dataset):
         self.root = Path(root) if root else LEROBOT_HOME / repo_id
         self.image_transforms = image_transforms
         self.delta_timestamps = delta_timestamps
+        # print(delta_timestamps)
         self.episodes = episodes
         self.tolerance_s = tolerance_s
         self.video_backend = video_backend if video_backend else "pyav"
@@ -628,6 +630,7 @@ class LeRobotDataset(torch.utils.data.Dataset):
         the main process and a subprocess fails to access it.
         """
         item = {}
+        # print(query_timestamps)
         for vid_key, query_ts in query_timestamps.items():
             video_path = self.root / self.meta.get_video_file_path(ep_idx, vid_key)
             frames = decode_video_frames_torchvision(
@@ -653,6 +656,7 @@ class LeRobotDataset(torch.utils.data.Dataset):
         if self.delta_indices is not None:
             current_ep_idx = self.episodes.index(ep_idx) if self.episodes is not None else ep_idx
             query_indices, padding = self._get_query_indices(idx, current_ep_idx)
+
             query_result = self._query_hf_dataset(query_indices)
             item = {**item, **padding}
             for key, val in query_result.items():

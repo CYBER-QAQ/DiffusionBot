@@ -72,7 +72,6 @@ def create_stats_buffers(
                     "max": nn.Parameter(max, requires_grad=False),
                 }
             )
-
         if stats is not None:
             # Note: The clone is needed to make sure that the logic in save_pretrained doesn't see duplicated
             # tensors anywhere (for example, when we use the same stats for normalization and

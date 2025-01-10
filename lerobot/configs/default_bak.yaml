@@ -1,8 +1,7 @@
 defaults:
   - _self_
-  - env: Grasp
-  # - policy: diffusion_zed_bottle
-  - policy: diffusion_zed_object
+  - env: pusht
+  - policy: diffusion
 
 hydra:
   run:
@@ -10,7 +9,7 @@ hydra:
     # with the same value for `dir` its contents will be overwritten unless you set `resume` to true.
     dir: outputs/train/${now:%Y-%m-%d}/${now:%H-%M-%S}_${env.name}_${policy.name}_${hydra.job.name}
   job:
-    name: default 
+    name: default
 
 # Set `resume` to true to resume a previous run. In order for this to work, you will need to make sure
 # `hydra.run.dir` is the directory of an existing run with at least one checkpoint in it.
@@ -28,19 +27,19 @@ seed: ???
 # keys common between the datasets are kept. Each dataset gets and additional transform that inserts the
 # "dataset_index" into the returned item. The index mapping is made according to the order in which the
 # datsets are provided.
-dataset_repo_id: ???
+dataset_repo_id: lerobot/pusht
 video_backend: pyav
 
 training:
   offline_steps: ???
 
   # Number of workers for the offline training dataloader.
-  num_workers: ???
+  num_workers: 4
 
   batch_size: ???
 
   eval_freq: ???
-  log_freq: ???
+  log_freq: 200
   save_checkpoint: true
   # Checkpoint is saved every `save_freq` training iterations and after the last training step.
   save_freq: ???
@@ -124,7 +123,7 @@ eval:
   use_async_envs: false
 
 wandb:
-  enable: true
+  enable: false
   # Set to true to disable saving an artifact despite save_checkpoint == True
   disable_artifact: false
   project: lerobot

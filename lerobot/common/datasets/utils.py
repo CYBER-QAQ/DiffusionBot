@@ -360,8 +360,11 @@ def check_timestamps_sync(
     This check is to make sure that each timestamps is separated to the next by 1/fps +/- tolerance to
     account for possible numerical error.
     """
+    print(hf_dataset)
     timestamps = torch.stack(hf_dataset["timestamp"])
+    print(timestamps.shape)
     diffs = torch.diff(timestamps)
+    print(diffs.shape)
     within_tolerance = torch.abs(diffs - 1 / fps) <= tolerance_s
 
     # We mask differences between the timestamp at the end of an episode

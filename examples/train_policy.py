@@ -18,23 +18,38 @@ output_directory.mkdir(parents=True, exist_ok=True)
 
 # Number of offline training steps (we'll only do offline training for this example.)
 # Adjust as you prefer. 5000 steps are needed to get something worth evaluating.
-training_steps = 5000
+training_steps = 100000
 device = torch.device("cuda")
 log_freq = 250
+# log_freq = 5
+
+# # Set up the dataset.
+# delta_timestamps = {
+#     # Load the previous image and state at -0.1 seconds before current frame,
+#     # then load current image and state corresponding to 0.0 second.
+#     "observation.images.zed_left": [-0.1, 0.0],
+#     "observation.images.zed_right": [-0.1, 0.0],
+#     "observation.state": [-0.1, 0.0],
+#     # Load the previous action (-0.1), the next action to be executed (0.0),
+#     # and 14 future actions with a 0.1 seconds spacing. All these actions will be
+#     # used to supervise the policy.
+#     "action": [-0.1, 0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.1, 1.2, 1.3, 1.4],
+# }
 
 # Set up the dataset.
 delta_timestamps = {
-    # Load the previous image and state at -0.1 seconds before current frame,
+    # Load the previous image and state at -1.0/30 seconds before current frame,
     # then load current image and state corresponding to 0.0 second.
-    "observation.image.zed_left": [-0.1, 0.0],
-    "observation.image.zed_right": [-0.1, 0.0],
-    "observation.state": [-0.1, 0.0],
-    # Load the previous action (-0.1), the next action to be executed (0.0),
-    # and 14 future actions with a 0.1 seconds spacing. All these actions will be
+    "observation.images.zed_left": [-1.0/30, 0.0],
+    "observation.images.zed_right": [-1.0/30, 0.0],
+    "observation.state": [-1.0/30, 0.0],
+    # Load the previous action (-1.0/30), the next action to be executed (0.0),
+    # and 14 future actions with a 1.0/30 seconds spacing. All these actions will be
     # used to supervise the policy.
-    "action": [-0.1, 0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.1, 1.2, 1.3, 1.4],
+    "action": [i * (1.0 / 30) for i in range(-1, 15)],
 }
-dataset = LeRobotDataset(repo_id="GraspAnything",root="/home/zc/DiffusionPolicy/datasets/CvtGraspAnyObject_H1-2_Inspire_20241127/")
+
+dataset = LeRobotDataset(repo_id="GraspAnything",root="/home/zc/DiffusionPolicy/datasets/CvtGraspAnyObject_H1-2_Inspire_20241127/",delta_timestamps=delta_timestamps)
 
 # Set up the the policy.
 # Policies are initialized with a configuration class, in this case `DiffusionConfig`.
@@ -71,6 +86,7 @@ while not done:
 
         if step % log_freq == 0:
             print(f"step: {step} loss: {loss.item():.3f}")
+            policy.save_pretrained(output_directory)
         step += 1
         if step >= training_steps:
             done = True
