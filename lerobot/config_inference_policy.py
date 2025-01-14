@@ -80,9 +80,6 @@ from lerobot.common.utils.utils import (
 )
 
 
-PATH = "../outputs/train/2025-01-02/15-18-45_real_world_diffusion_default"
-PATH = "../outputs/train/2025-01-02/15-18-45_real_world_diffusion_default/checkpoints/last/pretrained_model"
-
 def get_pretrained_policy_path(pretrained_policy_name_or_path, revision=None):
     # try:
         # pretrained_policy_path = Path(snapshot_download(pretrained_policy_name_or_path, revision=revision))
@@ -106,7 +103,7 @@ def get_pretrained_policy_path(pretrained_policy_name_or_path, revision=None):
     return pretrained_policy_path
 
 
-def config_policy_for_inference(ckpt="act_2cam"):
+def config_policy_for_inference(path, ckpt="act_2cam"):
     init_logging()
     # parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     # group = parser.add_mutually_exclusive_group(required=True)
@@ -147,7 +144,7 @@ def config_policy_for_inference(ckpt="act_2cam"):
     out_dir= None #args.out_dir
     config_overrides = [] #args.overrides
     pretrained_policy_path = get_pretrained_policy_path(
-        os.path.join(os.path.dirname(__file__), PATH, ckpt), revision=None)#args.revision)
+        os.path.join(os.path.dirname(__file__), path, ckpt), revision=None)#args.revision)
 
     assert (pretrained_policy_path is None) ^ (hydra_cfg_path is None)
     if pretrained_policy_path is not None:
@@ -202,9 +199,14 @@ def config_policy_for_inference(ckpt="act_2cam"):
     return policy
 
 
+
+GRASP_BOTTLE_PATH = "../outputs/train/2025-01-10/22-25-41_real_world_diffusion_default/checkpoints/last/pretrained_model"
+GRASP_OBJECT_PATH = "../outputs/train/2025-01-10/22-25-41_real_world_diffusion_default/checkpoints/last/pretrained_model"
+
+
 if __name__ == "__main__":
     # policy = config_policy_for_inference(ckpt="output_ckpt")
-    policy = config_policy_for_inference(ckpt="")
+    policy = config_policy_for_inference(path=GRASP_OBJECT_PATH, ckpt="")
     
     
     '''
