@@ -137,6 +137,11 @@ class DiffusionPolicy(
         if len(self._queues["action"]) == 0:
             # stack n latest observations from the queue
             batch = {k: torch.stack(list(self._queues[k]), dim=1) for k in batch if k in self._queues}
+            
+            # print(batch["observation.state"].shape)
+            # print(batch["observation.images"].shape)
+            # torch.Size([1, 2, 28])
+            # torch.Size([1, 2, 2, 3, 720, 1280])
             actions = self.diffusion.generate_actions(batch)
 
             # TODO(rcadene): make above methods return output dictionary?
@@ -268,6 +273,11 @@ class DiffusionModel(nn.Module):
                 )
             else:
                 # Combine batch, sequence, and "which camera" dims before passing to shared encoder.
+                
+                # print("HERE")
+                # print(batch["observation.images"].shape)
+                # torch.Size([2, 2, 3, 720, 1280])
+                # torch.Size([32, 2, 2, 3, 720, 1280])
                 img_features = self.rgb_encoder(
                     einops.rearrange(batch["observation.images"], "b s n ... -> (b s n) ...")
                 )

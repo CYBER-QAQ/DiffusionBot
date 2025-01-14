@@ -79,6 +79,10 @@ from lerobot.common.utils.utils import (
     set_global_seed,
 )
 
+
+PATH = "../outputs/train/2025-01-02/15-18-45_real_world_diffusion_default"
+PATH = "../outputs/train/2025-01-02/15-18-45_real_world_diffusion_default/checkpoints/last/pretrained_model"
+
 def get_pretrained_policy_path(pretrained_policy_name_or_path, revision=None):
     # try:
         # pretrained_policy_path = Path(snapshot_download(pretrained_policy_name_or_path, revision=revision))
@@ -143,7 +147,7 @@ def config_policy_for_inference(ckpt="act_2cam"):
     out_dir= None #args.out_dir
     config_overrides = [] #args.overrides
     pretrained_policy_path = get_pretrained_policy_path(
-        os.path.join(os.path.dirname(__file__), "../../datasets", ckpt), revision=None)#args.revision)
+        os.path.join(os.path.dirname(__file__), PATH, ckpt), revision=None)#args.revision)
 
     assert (pretrained_policy_path is None) ^ (hydra_cfg_path is None)
     if pretrained_policy_path is not None:
@@ -199,27 +203,43 @@ def config_policy_for_inference(ckpt="act_2cam"):
 
 
 if __name__ == "__main__":
-    policy = config_policy_for_inference(ckpt="output_ckpt")
+    # policy = config_policy_for_inference(ckpt="output_ckpt")
+    policy = config_policy_for_inference(ckpt="")
+    
+    
     '''
-    'observation.images.top' and 'observation.images.front' are captured from RGB camera 2 and 1, and 'observation.state' is captured from the environment state.
+    'observation.images.zed_left' and 'observation.images.zed_right' are captured from RGB cameras, and 'observation.state' is captured from the environment state.
     obs_dict:
-        observation.images.top: (480, 640, 3) numpy array
-        observation.images.front [optional]: (480, 640, 3) numpy array
-        observation.jointangles.arm: (6,) numpy array
-        observation.lastaction: (12,) numpy array
+        observation.images.zed_left: (720, 1280, 3) numpy array
+        observation.images.zed_right: (720, 1280, 3) numpy array
+        observation.state: (28,) numpy array
+        observation.last_action: (28,) numpy array
+        score: (1,) numpy array
     returns:
-        action: (12,) numpy array
+        action: (28,) numpy array
     '''
+    
+    
     for t in range(1000):
         now = time.time()
-        action = policy.act({
-            'observation.images.top':np.zeros((480, 640, 3)),
-            'observation.images.front':np.zeros((480, 640, 3)),
-            'observation.images.egor':np.zeros((720, 1280, 3)),
-            'observation.images.egol':np.zeros((720, 1280, 3)),
-            'observation.jointangles.arm':np.zeros((0,)),
-            'observation.lastaction': np.zeros((28,)),
-        })
+        # observation = {
+        #     'observation.images.zed_left':np.zeros((720, 1280, 3)),
+        #     'observation.images.zed_right':np.zeros((720, 1280, 3)),
+        #     'observation.state':np.zeros((28,)),
+        #     'observation.last_action': np.zeros((28,)),
+        #     'score': np.zeros((1,)),
+        # }
+        observation = {
+            'observation.images.zed_left':torch.zeros((1, 3, 720, 1280)).to('cuda'),
+            'observation.images.zed_right':torch.zeros((1, 3, 720, 1280)).to('cuda'),
+            'observation.state':torch.zeros((1,28,)).to('cuda'),
+            'observation.last_action': torch.zeros((28,)).to('cuda'),
+            'score': torch.zeros((1,)).to('cuda'),
+        }
+        with torch.inference_mode():
+            action = policy.select_action(observation)
+
+        action = action.cpu()
         if t==0:
             a0 = np.array(action)
         elif t<32:
