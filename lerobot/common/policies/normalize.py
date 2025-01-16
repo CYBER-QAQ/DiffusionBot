@@ -148,7 +148,8 @@ class Normalize(nn.Module):
                 # # torch.Size([32, 2, 3, 720, 1280])
                 # # torch.Size([3, 1, 1])
                 # # torch.Size([3, 1, 1])
-
+                # print(batch.keys())
+                # # dict_keys(['observation.last_action', 'observation.state', 'observation.images.zed_left', 'observation.images.zed_right', 'score'])
                 batch[key] = (batch[key] - mean) / (std + 1e-8)
             elif mode == "min_max":
                 min = buffer["min"]

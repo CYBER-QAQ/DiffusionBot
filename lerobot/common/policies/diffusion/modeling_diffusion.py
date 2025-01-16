@@ -775,6 +775,8 @@ class DiffusionConditionalResidualBlock1d(nn.Module):
         out = self.conv1(x)
 
         # Get condition embedding. Unsqueeze for broadcasting to `out`, resulting in (B, out_channels, 1).
+        # print(cond.dtype)
+        cond = cond.to(torch.float32)
         cond_embed = self.cond_encoder(cond).unsqueeze(-1)
         if self.use_film_scale_modulation:
             # Treat the embedding as a list of scales and biases.

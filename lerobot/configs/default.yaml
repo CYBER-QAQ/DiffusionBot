@@ -1,8 +1,8 @@
 defaults:
   - _self_
   - env: Grasp
-  # - policy: diffusion_zed_bottle
-  - policy: diffusion_zed_object
+  - policy: diffusion_zed_bottle
+  # - policy: diffusion_zed_object
 
 hydra:
   run:

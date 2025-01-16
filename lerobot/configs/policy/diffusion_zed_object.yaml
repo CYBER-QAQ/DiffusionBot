@@ -6,7 +6,8 @@
 
 seed: 100000
 # dataset_repo_id: CvtGraspAnyBottle_H1-2_Inspire_20241123
-dataset_repo_id: CvtGraspAnyObject_H1-2_Inspire_20241127
+# dataset_repo_id: CvtGraspAnyObject_H1-2_Inspire_20241127
+dataset_repo_id: CvtGraspAnyObject_MaskState
 
 
 # override_dataset_stats:
